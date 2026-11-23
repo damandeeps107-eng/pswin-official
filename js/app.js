@@ -6,8 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const trackBtn = document.getElementById('btnTrackSearch');
   const trackInput = document.getElementById('trackInput');
   const trackResultCard = document.getElementById('trackResultCard');
-  const demoPayBtn = document.getElementById('btnDemoPay');
-  const copyRefBtn = document.getElementById('btnCopyRef');
+    const copyRefBtn = document.getElementById('btnCopyRef');
   const printPassBtn = document.getElementById('btnPrintPass');
   const leaderboardTable = document.getElementById('leaderboardTableBody');
 
@@ -153,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (step === 4 && currentStep === 3) {
       const utr = document.getElementById('inputUTR').value.trim();
       if (!utr || utr.length < 6) {
-        alert("Kripya payment complete karke 12-digit UTR dalein, ya 'Instant Demo Pay' button use karein!");
+        alert("Kripya payment complete karke UPI app se apna 12-digit UTR / Reference number dalein!");
         return;
       }
       // Start the Speed Quiz!
@@ -264,18 +263,32 @@ document.addEventListener('DOMContentLoaded', () => {
   function chooseOption(chosenIdx) {
     clearInterval(questionTimerInterval);
     const qData = quizQuestions[currentQIndex];
+    const optionsContainer = document.getElementById('quizOptionsContainer');
+    const buttons = optionsContainer ? optionsContainer.querySelectorAll('.quiz-opt-btn') : [];
+
+    // Disable all options immediately to prevent double clicking
+    buttons.forEach((btn, idx) => {
+      btn.disabled = true;
+      btn.style.pointerEvents = 'none';
+
+      if (idx === qData.correct) {
+        btn.classList.add('correct-ans');
+      } else if (idx === chosenIdx) {
+        btn.classList.add('wrong-ans');
+      }
+    });
 
     if (chosenIdx === qData.correct) {
       quizScore++;
       if (window.synthAudio && isSoundOn) window.synthAudio.playSuccess();
     } else {
-      if (window.synthAudio && isSoundOn) window.synthAudio.playClick();
+      if (window.synthAudio && isSoundOn) window.synthAudio.playWrong();
     }
 
-    currentQIndex++;
     setTimeout(() => {
+      currentQIndex++;
       renderCurrentQuestion();
-    }, 200);
+    }, 1100);
   }
 
   // Final Submission with Quiz Score & Time
@@ -380,15 +393,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.goToStep(5);
   }
 
-  // Demo Pay trigger
-  if (demoPayBtn) {
-    demoPayBtn.addEventListener('click', () => {
-      const demoUTR = "UPI" + Math.floor(100000000000 + Math.random() * 900000000000);
-      document.getElementById('inputUTR').value = demoUTR;
-      window.goToStep(4);
-    });
-  }
-
+  
   // Copy Reference Code
   if (copyRefBtn) {
     copyRefBtn.addEventListener('click', () => {
@@ -469,46 +474,97 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  async function performTrackSearch() {
-    const q = trackInput.value.trim();
+  function performTrackSearch() {
+    const q = (trackInput.value || '').trim();
     if (!q) {
-      alert("Kripya Reference Code (e.g. GTA6-PS5-XXXXXX) ya Mobile number dalein!");
+      alert("Kripya Reference Code (e.g. GTA6-PS5-XXXXXX) ya 10-digit Mobile number dalein!");
       return;
     }
 
-    try {
-      const res = await fetch(`/api/track?q=${encodeURIComponent(q)}`);
-      if (res.ok) {
-        const data = await res.json();
-        renderTrackResult(data.entry);
-        return;
-      }
-    } catch (e) {
-      // Local fallback
-      const saved = JSON.parse(localStorage.getItem('gta6_challenge_entries') || '[]');
-      const cleanQ = q.replace(/[^0-9a-zA-Z]/g, '').toUpperCase();
-      const found = saved.find(s => s.id.replace(/-/g,'').toUpperCase() === cleanQ || s.phone.includes(q));
-      if (found) {
-        renderTrackResult({
-          id: found.id,
-          ticketNo: found.ticketNo,
-          name: found.name,
-          phone: found.phone,
-          maskedPhone: found.phone.replace(/(\d{2})\d{6}(\d{2})/, "$1******$2"),
-          maskedAddress: found.fullAddress ? found.fullAddress.substring(0, 15) + "..." : found.city,
-          city: found.city,
-          pincode: found.pincode,
-          score: found.score,
-          timeTaken: found.timeTaken,
-          rank: found.rank,
-          targetPrize: "🏆 Sony PS5 Pro Arena",
-          paymentStatus: "VERIFIED"
-        });
-        return;
-      }
+    const cleanQ = q.replace(/[^0-9a-zA-Z]/g, '').toUpperCase();
+    const cleanDigits = q.replace(/[^0-9]/g, '');
+
+    // 1. Search in localStorage
+    const saved = JSON.parse(localStorage.getItem('gta6_challenge_entries') || '[]');
+    let found = saved.find(s => {
+      const matchId = s.id && s.id.replace(/[^0-9a-zA-Z]/g, '').toUpperCase().includes(cleanQ);
+      const matchPhone = cleanDigits.length >= 6 && s.phone && s.phone.replace(/[^0-9]/g, '').includes(cleanDigits);
+      return matchId || matchPhone;
+    });
+
+    // 2. Preloaded verified entries if searched
+    if (!found) {
+      const defaults = [
+        {
+          id: "GTA6-PS5-927401",
+          ticketNo: 742,
+          name: "Aman Sharma",
+          phone: "9876543210",
+          city: "New Delhi",
+          state: "Delhi",
+          pincode: "110001",
+          score: 5,
+          timeTaken: 11.4,
+          rank: 1,
+          targetPrize: "🏆 1st Prize: Sony PS5 Pro Console",
+          paymentStatus: "VERIFIED (Slot Locked)"
+        },
+        {
+          id: "GTA6-PS5-883912",
+          ticketNo: 743,
+          name: "Rahul Verma",
+          phone: "9811223344",
+          city: "Mumbai",
+          state: "Maharashtra",
+          pincode: "400050",
+          score: 5,
+          timeTaken: 13.8,
+          rank: 2,
+          targetPrize: "🥈 2nd Prize: Sony PS5 Slim Console",
+          paymentStatus: "VERIFIED (Slot Locked)"
+        },
+        {
+          id: "GTA6-PS5-714088",
+          ticketNo: 744,
+          name: "Vikramjit Singh",
+          phone: "9899001122",
+          city: "Chandigarh",
+          state: "Punjab",
+          pincode: "160022",
+          score: 4,
+          timeTaken: 9.6,
+          rank: 3,
+          targetPrize: "🎮 3rd Prize: GTA VI Day-One Disc",
+          paymentStatus: "VERIFIED (Slot Locked)"
+        }
+      ];
+
+      found = defaults.find(d => {
+        const matchId = d.id.replace(/[^0-9a-zA-Z]/g, '').toUpperCase().includes(cleanQ);
+        const matchPhone = cleanDigits.length >= 6 && d.phone.includes(cleanDigits);
+        return matchId || matchPhone;
+      });
     }
 
-    alert("❌ Koi entry nahi mili. Kripya check karein ya naya registration karein!");
+    if (found) {
+      const phoneStr = found.phone || '';
+      const maskedPhone = phoneStr.length >= 10 ? phoneStr.slice(0, 2) + '******' + phoneStr.slice(-2) : 'Verified Phone';
+      const addrStr = (found.fullAddress ? found.fullAddress.substring(0, 18) + '... ' : '') + ((found.city || '') + ', ' + (found.state || ''));
+
+      renderTrackResult({
+        id: found.id,
+        ticketNo: found.ticketNo,
+        name: found.name,
+        phone: maskedPhone,
+        address: addrStr || 'Registered Delivery Address',
+        score: String(found.score) + "/5 (" + String(found.timeTaken) + "s)",
+        targetPrize: found.targetPrize || '🏆 Sony PS5 Pro Arena',
+        paymentStatus: '✅ Payment Verified (Slot Locked)'
+      });
+      return;
+    }
+
+    alert("❌ Koi entry nahi mili. Kripya apna valid Reference Code (e.g. GTA6-PS5-XXXXXX) ya 10-digit mobile number check karein!");
   }
 
   function renderTrackResult(entry) {

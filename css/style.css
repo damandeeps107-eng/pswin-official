@@ -1254,3 +1254,38 @@ img {
   .track-input-group { flex-direction: column; }
   .btn-track-action { padding: 14px 20px; }
 }
+
+/* Quiz Answer Feedback Styles */
+.quiz-opt-btn.correct-ans {
+  background: rgba(16, 185, 129, 0.25) !important;
+  border: 2px solid #10b981 !important;
+  color: #34d399 !important;
+  font-weight: 700 !important;
+  box-shadow: 0 0 16px rgba(16, 185, 129, 0.4) !important;
+  position: relative;
+}
+
+.quiz-opt-btn.correct-ans::after {
+  content: ' ✓ CORRECT';
+  float: right;
+  font-weight: 800;
+  color: #10b981;
+}
+
+.quiz-opt-btn.wrong-ans {
+  background: rgba(239, 68, 68, 0.25) !important;
+  border: 2px solid #ef4444 !important;
+  color: #fca5a5 !important;
+  font-weight: 700 !important;
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.4) !important;
+  position: relative;
+  text-decoration: line-through;
+}
+
+.quiz-opt-btn.wrong-ans::after {
+  content: ' ✗ WRONG';
+  float: right;
+  font-weight: 800;
+  color: #ef4444;
+  text-decoration: none;
+}
