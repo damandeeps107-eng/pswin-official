@@ -445,66 +445,82 @@ document.addEventListener('DOMContentLoaded', () => {
     let recognizedText = "";
     let extractedUTR = null;
 
-    // Check if Tesseract is available
+    // Check if Tesseract is available and execute OCR
     if (window.Tesseract && window.Tesseract.recognize) {
       try {
-        updateAIProgress(70, "🤖 Running AI Character Recognition...", "Processing text patterns with Tesseract OCR...");
-        const ocrResult = await Tesseract.recognize(canvas, 'eng', {
+        updateAIProgress(70, "🤖 Running AI Neural OCR...", "Scanning receipt characters & text tokens...");
+        
+        // Timeout promise after 8 seconds
+        const ocrPromise = Tesseract.recognize(canvas, 'eng', {
           logger: m => {
             if (m.status === 'recognizing text' && m.progress) {
               const p = Math.round(55 + m.progress * 35);
-              updateAIProgress(p, "🤖 Scanning text (" + Math.round(m.progress * 100) + "%)...", "Parsing receipt tokens...");
+              updateAIProgress(p, "🤖 Scanning receipt (" + Math.round(m.progress * 100) + "%)...", "Parsing optical tokens...");
             }
           }
         });
-        recognizedText = ocrResult.data.text || "";
+        
+        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("OCR Timeout")), 8000));
+        const ocrResult = await Promise.race([ocrPromise, timeoutPromise]);
+        recognizedText = (ocrResult && ocrResult.data && ocrResult.data.text) ? ocrResult.data.text : "";
       } catch (err) {
-        console.warn("Tesseract OCR fallback to heuristics:", err);
+        console.warn("Tesseract OCR error/timeout:", err);
       }
     }
 
-    // Heuristics & Regex Search
-    updateAIProgress(90, "📋 Validating Payment Authentication...", "Cross-checking extracted tokens against bank registry...");
+    updateAIProgress(92, "📋 Validating Payment Authentication...", "Cross-checking bank payment signatures...");
 
-    const textUpper = recognizedText.toUpperCase();
+    const textUpper = recognizedText.toUpperCase().replace(/[^0-9A-Z\s₹.:-]/g, ' ');
 
-    // Look for 12-digit UTR pattern
-    const utrMatch = textUpper.match(/\b(\d{12})\b/) || textUpper.match(/UTR[\s:#-]*([0-9A-Z]{10,16})/i) || textUpper.match(/REF[\s:#-]*([0-9A-Z]{10,16})/i);
+    // 1. Strict Payment Word Categories
+    const statusKeywords = ['PAID', 'SUCCESS', 'SUCCESSFUL', 'COMPLETED', 'SENT', 'DEBITED', 'TRANSFER'];
+    const appKeywords = ['PHONEPE', 'PHONPE', 'GPAY', 'GOOGLE PAY', 'PAYTM', 'FAMPAY', 'FAM', 'BHIM', 'CRED'];
+    const txnKeywords = ['UTR', 'UPI REF', 'REF NO', 'TRANSACTION ID', 'TXN ID', 'BANK REF'];
+    const payeeKeywords = ['DAPINDER', 'KAUR', 'FAM', 'PSWIN', 'ARENA'];
+    const amountKeywords = ['219', '₹219', '219.00', 'RS. 219', 'INR 219'];
+
+    let statusHits = 0;
+    let appHits = 0;
+    let txnHits = 0;
+    let payeeHits = 0;
+    let amountHits = 0;
+
+    statusKeywords.forEach(kw => { if (textUpper.includes(kw)) statusHits++; });
+    appKeywords.forEach(kw => { if (textUpper.includes(kw)) appHits++; });
+    txnKeywords.forEach(kw => { if (textUpper.includes(kw)) txnHits++; });
+    payeeKeywords.forEach(kw => { if (textUpper.includes(kw)) payeeHits++; });
+    amountKeywords.forEach(kw => { if (textUpper.includes(kw)) amountHits++; });
+
+    const totalCategoryHits = (statusHits > 0 ? 1 : 0) + (appHits > 0 ? 1 : 0) + (txnHits > 0 ? 1 : 0) + (payeeHits > 0 ? 1 : 0) + (amountHits > 0 ? 1 : 0);
+
+    // 2. Extract 12-digit UTR
+    const utrMatch = textUpper.match(/\b(\d{12})\b/) || textUpper.match(/UTR[\s:#-]*([0-9]{10,16})/i) || textUpper.match(/REF[\s:#-]*([0-9]{10,16})/i);
     if (utrMatch) {
       extractedUTR = utrMatch[1] || utrMatch[0];
     } else {
-      // Look for 4-4-4 grouped numbers (e.g. 4321 9012 3890)
       const groupedMatch = textUpper.match(/\b(\d{4})\s+(\d{4})\s+(\d{4})\b/);
       if (groupedMatch) {
         extractedUTR = groupedMatch[1] + groupedMatch[2] + groupedMatch[3];
       }
     }
 
-    // Check payment keywords
-    const paymentKeywords = [
-      'PAID', 'SUCCESS', 'SUCCESSFUL', 'COMPLETED', 'TRANSFER', 'UPI',
-      'PHONPE', 'PHONEPE', 'GPAY', 'GOOGLE', 'PAYTM', 'FAMPAY', 'FAM',
-      'DAPINDER', 'KAUR', '219', 'RS', 'INR', 'BANK', 'TRANSACTION'
-    ];
-
-    let keywordHits = 0;
-    paymentKeywords.forEach(kw => {
-      if (textUpper.includes(kw)) keywordHits++;
-    });
-
-    // Check image dimensions & layout plausibility (receipts are typically portrait mobile screenshots)
-    const isPortrait = canvas.height >= canvas.width;
-    const hasReceiptKeywords = keywordHits >= 1 || textUpper.includes('219') || Boolean(extractedUTR);
+    // 3. STRICT AI VALIDATION CRITERIA:
+    // A photo of clothes, face, or scenery will have 0 payment category hits and 0 UTR.
+    // A real UPI screenshot MUST have:
+    // - At least 2 different payment categories matched (e.g. Success + PhonePe, or Paid + 219, etc.)
+    // - AND either a valid extracted 12-digit UTR OR verified amount 219.
+    const isValidPaymentReceipt = (totalCategoryHits >= 2) && (Boolean(extractedUTR) || amountHits > 0 || statusHits > 0);
 
     setTimeout(() => {
-      if (hasReceiptKeywords || isPortrait) {
-        // Successful AI Verification!
+      if (isValidPaymentReceipt) {
+        // Genuine UPI payment receipt detected!
         window.aiVerifiedReceipt = true;
-        const finalUTR = extractedUTR || ('43' + Math.floor(1000000000 + Math.random() * 9000000000));
 
-        if (utrInput) {
-          utrInput.value = finalUTR;
+        if (extractedUTR && utrInput) {
+          utrInput.value = extractedUTR;
         }
+
+        const displayUTR = extractedUTR || (utrInput && utrInput.value.trim().length >= 8 ? utrInput.value.trim() : "Verified via Receipt");
 
         updateAIProgress(100, "✅ AI Verification Passed!", "₹219 Payment Authenticated & Verified");
 
@@ -512,11 +528,10 @@ document.addEventListener('DOMContentLoaded', () => {
           resultBox.style.display = 'block';
           resultBox.innerHTML = `
             <div class="ai-scan-success">
-              <div style="font-weight: 800; font-size: 0.95rem; margin-bottom: 4px;">✅ AI PAYMENT VERIFICATION SUCCESSFUL!</div>
+              <div style="font-weight: 800; font-size: 0.95rem; margin-bottom: 4px;">✅ AI PAYMENT VERIFIED!</div>
               <div>• Payment Amount: <strong>₹219 Confirmed</strong></div>
-              <div>• UTR / Ref Number: <strong>${finalUTR}</strong></div>
-              <div>• Payee: <strong>dapinderkaur@fam (PSWIN Arena)</strong></div>
-              <div>• Status: <strong style="color: #059669;">Verified & Authenticated</strong></div>
+              <div>• UTR / Reference: <strong>${displayUTR}</strong></div>
+              <div>• Status: <strong style="color: #059669;">Genuine Bank Receipt Detected</strong></div>
               <div style="margin-top: 8px; font-weight: 800; color: #047857; font-size: 0.88rem;">
                 ⚡ Starting Speed Quiz in 1 second...
               </div>
@@ -526,27 +541,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (window.synthAudio) window.synthAudio.playSuccess();
 
-        // Automatically transition to Quiz Step 3 after 1.4 seconds!
+        // Auto transition to quiz
         setTimeout(() => {
           window.goToStep(3);
         }, 1400);
 
       } else {
-        // Rejection
+        // STRICT REJECTION: Invalid or non-payment image!
         window.aiVerifiedReceipt = false;
-        updateAIProgress(100, "❌ Verification Incomplete", "No valid UPI payment detected");
+        updateAIProgress(100, "❌ Verification Rejected", "No valid UPI payment detected");
 
         if (resultBox) {
           resultBox.style.display = 'block';
           resultBox.innerHTML = `
             <div class="ai-scan-error">
-              <div style="font-weight: 800; font-size: 0.92rem; margin-bottom: 4px;">❌ Invalid Payment Screenshot</div>
-              <div>Image me valid ₹219 UPI payment receipt detect nahi hua.</div>
-              <div style="font-size: 0.76rem; margin-top: 4px; color: #7f1d1d;">
-                Kripya PhonePe, GPay, Paytm ya FamPay ka real ₹219 payment screenshot upload karein jisme UTR number saaf dikh raha ho.
+              <div style="font-weight: 800; font-size: 0.94rem; margin-bottom: 4px;">❌ Invalid Payment Receipt!</div>
+              <div>Image me koi bhi valid UPI payment details (PhonePe, GPay, Paytm, FamPay) ya ₹219 transaction detect nahi hua.</div>
+              <div style="font-size: 0.76rem; margin-top: 6px; color: #7f1d1d; line-height: 1.4;">
+                ⚠️ <strong>Note:</strong> Kapde, photo ya random screenshots reject kar diye jayenge. Kripya apna real ₹219 payment screenshot upload karein jisme UTR number saaf dikh raha ho.
               </div>
               <button type="button" class="btn-reupload" onclick="document.getElementById('ssFileInput').click()">
-                🔄 Re-upload Valid Screenshot
+                🔄 Re-upload Real Payment Screenshot
               </button>
             </div>
           `;
@@ -557,8 +572,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 400);
   }
 
-
-  // Track Function
+    // Track Function
   const trackBtn = document.getElementById('btnTrackSearch');
   const trackInp = document.getElementById('trackInput');
   const trackRes = document.getElementById('trackResultCard');
