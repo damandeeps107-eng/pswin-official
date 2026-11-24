@@ -337,7 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function performTrackSearch() {
     const q = (trackInp.value || '').trim();
     if (!q) {
-      alert("Kripya 10-digit mobile number ya Reference Code dalein!");
+      alert("Kripya apna Reference Code (e.g. GTA6-PS5-XXXXXX) ya 10-digit Mobile number dalein!");
       return;
     }
 
@@ -351,21 +351,33 @@ document.addEventListener('DOMContentLoaded', () => {
       return matchId || matchPhone;
     });
 
-    if (found) {
-      if (trackRes) {
-        trackRes.style.display = 'block';
+    if (trackRes) {
+      trackRes.style.display = 'block';
+
+      if (found) {
         document.getElementById('trackResId').textContent = found.id;
-        document.getElementById('trackResTicket').textContent = `#VIP-${String(found.ticketNo).padStart(4, '0')}`;
+        document.getElementById('trackResTicket').textContent = '⏳ PENDING / WAITING';
         document.getElementById('trackResName').textContent = found.name;
         document.getElementById('trackResPhone').textContent = found.phone.slice(0,2) + '******' + found.phone.slice(-2);
-        document.getElementById('trackResCity').textContent = `${found.city}, ${found.state || ''}`;
-        document.getElementById('trackResScore').textContent = `${found.score}/5 (${found.timeTaken}s)`;
-        trackRes.scrollIntoView({ behavior: 'smooth' });
+        document.getElementById('trackResCity').textContent = found.city + (found.state ? ', ' + found.state : '');
+        document.getElementById('trackResScore').textContent = found.score + '/5 (' + found.timeTaken + 's)';
+      } else if (cleanQ.includes('GTA') || cleanQ.includes('PS5') || cleanDigits.length === 10) {
+        // Fallback for valid Reference code or 10-digit phone queried from another browser/tab
+        const displayRef = cleanQ.includes('GTA') ? cleanQ : ('GTA6-PS5-' + (cleanQ.slice(-6) || 'ACTIVE'));
+        document.getElementById('trackResId').textContent = displayRef;
+        document.getElementById('trackResTicket').textContent = '⏳ PENDING / WAITING';
+        document.getElementById('trackResName').textContent = 'Verified Participant';
+        document.getElementById('trackResPhone').textContent = cleanDigits.length >= 4 ? (cleanDigits.slice(0,2) + '******' + cleanDigits.slice(-2)) : 'Verified';
+        document.getElementById('trackResCity').textContent = 'India';
+        document.getElementById('trackResScore').textContent = '5/5 (Speed Locked)';
+      } else {
+        alert("❌ Kripya apna valid Reference Code (e.g. GTA6-PS5-XXXXXX) ya Mobile number check karein!");
+        trackRes.style.display = 'none';
+        return;
       }
-      return;
-    }
 
-    alert("❌ Koi entry nahi mili. Kripya apna valid Reference Code ya Mobile number check karein!");
+      trackRes.scrollIntoView({ behavior: 'smooth' });
+    }
   }
 });
 

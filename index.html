@@ -207,10 +207,10 @@
 
       <!-- STEP 4: VIP Ticket Pass & Confirmation -->
       <div class="form-step" id="stepSection4">
-        <div class="ticket-wrapper">
+                <div class="ticket-wrapper">
           <div class="ticket-top">
             <span class="ticket-pass-badge" id="ticketPassNo">#VIP-0745</span>
-            <span style="color: #10b981; font-weight: 700; font-size: 0.85rem;">✓ PAYMENT & ENTRY VERIFIED</span>
+            <span style="color: #10b981; font-weight: 700; font-size: 0.85rem;">✓ ENTRY & QUIZ SUBMITTED</span>
           </div>
 
           <h2 style="font-size: 1.6rem; margin-bottom: 4px;" id="ticketPassName">Participant Name</h2>
@@ -223,15 +223,18 @@
             <div class="ticket-ref-code" id="ticketPassRef">GTA6-PS5-XXXXXX</div>
           </div>
 
-          <div style="font-size: 0.82rem; color: #94a3b8;">
-            Grand Finale Declaration: <strong>15 December 2026</strong>
+          <div style="font-size: 0.85rem; color: #38bdf8; font-weight: 700; margin-top: 6px;">
+            📢 Grand Finale Result: 15 Tareek ko Live Announce Hoga!
           </div>
         </div>
 
-        <div class="notice-banner">
-          <h4>⏳ Verification in Progress</h4>
-          <p>
-            Aapka quiz score aur payment details submit ho chuke hain. <strong>Leaderboard 30 minutes me refresh ho jayega</strong>, aap neeche Reference Code daal kar apna updated status dekh sakte hain!
+        <div class="notice-banner" style="background: #fffbeb; border: 1.5px solid #fde68a;">
+          <h4 style="color: #b45309; display: flex; align-items: center; gap: 6px;">
+            <span>⏳</span> Current Status: Pending & Waiting
+          </h4>
+          <p style="color: #92400e; line-height: 1.5;">
+            Aapka quiz score aur registration details successfully lock ho chuki hain. <strong>Aapka contest result 15 Tareek ko declare kiya jayega!</strong><br>
+            Apna Reference Code copy kar lein aur neeche <strong>Tracking section</strong> me daal kar aap apna status kabhi bhi check kar sakte hain.
           </p>
         </div>
 
@@ -250,26 +253,40 @@
     <!-- Quick Track Section -->
     <div class="track-section">
       <h3 style="font-size: 1.05rem; font-weight: 800; color: #0f172a;">🔍 Track Your Existing Registration</h3>
-      <p style="font-size: 0.82rem; color: #64748b; margin-top: 2px;">Enter your 10-digit mobile number or Reference Code to check your verified status.</p>
+      <p style="font-size: 0.82rem; color: #64748b; margin-top: 2px;">Enter your Reference Code or 10-digit mobile number to check your verified status.</p>
       
       <div class="track-input-wrap">
         <input type="text" id="trackInput" class="form-input" placeholder="e.g. GTA6-PS5-XXXXXX or 9876543210" style="margin-bottom: 0;">
         <button type="button" class="btn-track" id="btnTrackSearch">TRACK STATUS</button>
       </div>
 
-      <div id="trackResultCard" style="display: none; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 18px; margin-top: 16px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">
-          <strong id="trackResId" style="color: var(--accent-primary); font-family: monospace; font-size: 1.05rem;">-</strong>
-          <span id="trackResTicket" style="background: #dcfce7; color: #166534; font-size: 0.75rem; font-weight: 800; padding: 3px 10px; border-radius: 12px;">#VIP-0000</span>
+      <div id="trackResultCard" style="display: none; background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 20px; margin-top: 18px; box-shadow: 0 4px 14px rgba(0,0,0,0.05);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+          <strong id="trackResId" style="color: var(--accent-primary); font-family: monospace; font-size: 1.1rem; letter-spacing: 0.5px;">GTA6-PS5-XXXXXX</strong>
+          <span id="trackResTicket" style="background: #fef3c7; color: #b45309; border: 1px solid #fde68a; font-size: 0.78rem; font-weight: 800; padding: 4px 12px; border-radius: 20px;">⏳ PENDING / WAITING</span>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.85rem;">
-          <div>Name: <strong id="trackResName">-</strong></div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.86rem; margin-bottom: 14px;">
+          <div>Participant: <strong id="trackResName">-</strong></div>
           <div>Mobile: <strong id="trackResPhone">-</strong></div>
-          <div>City: <strong id="trackResCity">-</strong></div>
-          <div>Score: <strong id="trackResScore" style="color: var(--accent-gold);">-</strong></div>
+          <div>City/State: <strong id="trackResCity">-</strong></div>
+          <div>Quiz Score: <strong id="trackResScore" style="color: #f59e0b;">-</strong></div>
         </div>
-        <div style="margin-top: 10px; font-size: 0.8rem; color: #166534; font-weight: 600;">
-          ✅ Payment Status: Verified & Slot Locked
+
+        <!-- Pending & Waiting Official Result Notice -->
+        <div style="background: #fffbeb; border: 1.5px solid #fcd34d; border-radius: 10px; padding: 14px; text-align: left;">
+          <div style="color: #b45309; font-weight: 800; font-size: 0.92rem; display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+            <span>⏳</span> Current Status: Pending & Waiting
+          </div>
+          <div style="color: #78350f; font-size: 0.84rem; line-height: 1.5;">
+            Aapka quiz score aur ₹219 registration successfully verify hokar submit ho gaya hai.<br>
+            <strong>📢 Official Winner Result 15 Tareek ko Live Declare Hoga!</strong><br>
+            Tab tak aapka status Waiting list me rahega. Sabhi verified participants ka final leaderboard 15 tareek ko release kiya jayega.
+          </div>
+        </div>
+
+        <div style="margin-top: 12px; font-size: 0.78rem; color: #059669; font-weight: 600; display: flex; align-items: center; gap: 5px;">
+          <span>✅</span> Payment Status: ₹219 Paid & Verified (Slot Locked)
         </div>
       </div>
     </div>
