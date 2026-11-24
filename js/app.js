@@ -1,66 +1,28 @@
-// PSWIN INDIA - CLEAN WHITE FORM CONTROLLER
+/**
+ * PSWIN INDIA • Sony PS5 Pro Mega Lucky Draw (250 Slots Only)
+ * Draw Date: 1 December 2026
+ * Entry Fee: ₹499
+ */
+
 document.addEventListener('DOMContentLoaded', () => {
-  // Visitor Counter
-  try {
-    const curVisits = parseInt(localStorage.getItem('pswin_total_visits') || '0', 10) + 1;
-    localStorage.setItem('pswin_total_visits', curVisits);
-  } catch(e){}
+  let currentStep = 1;
+  const totalSteps = 3;
 
   const stepIndicators = [
     document.getElementById('stepInd1'),
     document.getElementById('stepInd2'),
-    document.getElementById('stepInd3'),
-    document.getElementById('stepInd4')
+    document.getElementById('stepInd3')
   ];
 
   const stepSections = [
     document.getElementById('stepSection1'),
     document.getElementById('stepSection2'),
-    document.getElementById('stepSection3'),
-    document.getElementById('stepSection4')
+    document.getElementById('stepSection3')
   ];
 
-  let currentStep = 1;
-
-  // 5 GTA Lore Questions
-  const quizQuestions = [
-    {
-      q: "Grand Theft Auto VI ki kahani kis iconic city me set hai?",
-      options: ["Liberty City", "Vice City", "Los Santos", "San Fierro"],
-      correct: 1
-    },
-    {
-      q: "GTA VI ke official trailer me reveal huye do protagonists ke naam kya hain?",
-      options: ["Michael & Trevor", "CJ & Sweet", "Lucia & Jason", "Tommy & Claude"],
-      correct: 2
-    },
-    {
-      q: "GTA VI ka fictional state 'Leonida' real-world ke kis US state par based hai?",
-      options: ["California", "Texas", "Florida", "Nevada"],
-      correct: 2
-    },
-    {
-      q: "Rockstar Games ne GTA VI ka first official trailer kis saal launch kiya tha?",
-      options: ["2021", "2022", "2023", "2024"],
-      correct: 2
-    },
-    {
-      q: "GTA Franchise ka developer aur publisher kaunsa studio hai?",
-      options: ["Ubisoft", "Rockstar Games", "Electronic Arts", "Bethesda"],
-      correct: 1
-    }
-  ];
-
-  let currentQIndex = 0;
-  let quizScore = 0;
-  let questionTimeLeft = 15;
-  let questionTimerInterval = null;
-  let quizStartTime = null;
-  let quizTotalTimeSeconds = 0;
-
-  // Step Navigation
+  // Global Step Navigation
   window.goToStep = function(step) {
-    if (step < 1 || step > 4) return;
+    if (step < 1 || step > totalSteps) return;
 
     // Step 1 Validation (Details & Address)
     if (step === 2 && currentStep === 1) {
@@ -82,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       if (!address || address.length < 4) {
-        alert("Kripya shipping delivery address dalein!");
+        alert("Kripya delivery address dalein!");
         document.getElementById('inputAddress').focus();
         return;
       }
@@ -91,16 +53,16 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       if (!/^\d{6}$/.test(pincode)) {
-        alert("Kripya 6-digit ka area pincode dalein!");
+        alert("Kripya 6-digit Pincode enter karein!");
         document.getElementById('inputPincode').focus();
         return;
       }
     }
 
-    // Step 2 Validation (Payment UTR)
+    // Step 2 -> Step 3 (Payment Verification & Pass Generation)
     if (step === 3 && currentStep === 2) {
       if (!window.aiVerifiedReceipt) {
-        alert("⚠️ Kripya pehle apne ₹219 payment ka screenshot upload karein! Hamara AI scanner receipt verify karke quiz unlock karega.");
+        alert("⚠️ Kripya pehle apne ₹499 payment ka screenshot upload karein! Hamara AI scanner receipt verify karke Lucky Draw Pass generate karega.");
         const scannerBox = document.getElementById('aiScannerBox');
         if (scannerBox) scannerBox.scrollIntoView({ behavior: 'smooth' });
         return;
@@ -111,8 +73,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('inputUTR').focus();
         return;
       }
-      // Start Speed Quiz
-      startQuizChallenge();
+      finishRegistrationAndIssuePass();
+      return;
     }
 
     currentStep = step;
@@ -135,102 +97,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    const formCard = document.getElementById('formCard');
-    if (formCard) formCard.scrollIntoView({ behavior: 'smooth' });
+    window.scrollTo({ top: 180, behavior: 'smooth' });
   };
 
-  // Start Speed Quiz
-  function startQuizChallenge() {
-    try {
-      const qz = parseInt(localStorage.getItem('pswin_total_quizzes') || '0', 10) + 1;
-      localStorage.setItem('pswin_total_quizzes', qz);
-    } catch(e){}
-
-    quizScore = 0;
-    currentQIndex = 0;
-    quizStartTime = Date.now();
-    renderCurrentQuestion();
-  }
-
-  function renderCurrentQuestion() {
-    if (currentQIndex >= quizQuestions.length) {
-      finishQuizAndSubmit();
-      return;
-    }
-
-    const qData = quizQuestions[currentQIndex];
-    const qNumEl = document.getElementById('quizQNum');
-    const qTextEl = document.getElementById('quizQText');
-    const timerSecEl = document.getElementById('quizTimerSec');
-
-    if (qNumEl) qNumEl.textContent = `Question ${currentQIndex + 1} of ${quizQuestions.length}`;
-    if (qTextEl) qTextEl.textContent = qData.q;
-
-    questionTimeLeft = 15;
-    if (timerSecEl) timerSecEl.textContent = `${questionTimeLeft}s`;
-    clearInterval(questionTimerInterval);
-
-    questionTimerInterval = setInterval(() => {
-      questionTimeLeft--;
-      if (timerSecEl) timerSecEl.textContent = `${questionTimeLeft}s`;
-      if (questionTimeLeft <= 0) {
-        clearInterval(questionTimerInterval);
-        chooseOption(-1);
-      }
-    }, 1000);
-
-    const optionsContainer = document.getElementById('quizOptionsContainer');
-    if (!optionsContainer) return;
-    optionsContainer.innerHTML = '';
-    const letters = ['A', 'B', 'C', 'D'];
-
-    qData.options.forEach((opt, idx) => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'quiz-opt-btn';
-      btn.innerHTML = `<span><strong style="color:var(--accent-primary); margin-right:8px;">${letters[idx]}.</strong> ${opt}</span>`;
-      btn.onclick = () => chooseOption(idx);
-      optionsContainer.appendChild(btn);
-    });
-  }
-
-  function chooseOption(chosenIdx) {
-    clearInterval(questionTimerInterval);
-    const qData = quizQuestions[currentQIndex];
-    const optionsContainer = document.getElementById('quizOptionsContainer');
-    const buttons = optionsContainer ? optionsContainer.querySelectorAll('.quiz-opt-btn') : [];
-
-    buttons.forEach((btn, idx) => {
-      btn.disabled = true;
-      btn.style.pointerEvents = 'none';
-
-      if (idx === qData.correct) {
-        btn.classList.add('correct-ans');
-        btn.innerHTML += ' <span style="color:#059669; font-weight:800;">✓</span>';
-      } else if (idx === chosenIdx) {
-        btn.classList.add('wrong-ans');
-        btn.innerHTML += ' <span style="color:#dc2626; font-weight:800;">✗</span>';
-      }
-    });
-
-    if (chosenIdx === qData.correct) {
-      quizScore++;
-      if (window.synthAudio) window.synthAudio.playSuccess();
-    } else {
-      if (window.synthAudio) window.synthAudio.playWrong();
-    }
-
-    setTimeout(() => {
-      currentQIndex++;
-      renderCurrentQuestion();
-    }, 1000);
-  }
-
-  // Quiz Finished -> Submit & Show Ticket
-  function finishQuizAndSubmit() {
-    const totalTimeMs = Date.now() - quizStartTime;
-    quizTotalTimeSeconds = parseFloat((totalTimeMs / 1000).toFixed(1));
-
+  // Complete Registration & Generate Pass
+  function finishRegistrationAndIssuePass() {
     const name = document.getElementById('inputName').value.trim();
     const phone = document.getElementById('inputPhone').value.trim();
     const address = document.getElementById('inputAddress').value.trim();
@@ -242,11 +113,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const saved = JSON.parse(localStorage.getItem('gta6_challenge_entries') || '[]');
     const cleanPhone = phone.replace(/[^0-9]/g, '').slice(-10);
     const randomHex = Math.random().toString(36).substring(2, 8).toUpperCase();
-    const refId = `GTA6-PS5-${randomHex}`;
+    const refId = `LUCKY-PS5-${randomHex}`;
+    const slotNumber = 185 + saved.length + 1;
 
     const newEntry = {
       id: refId,
-      ticketNo: 745 + saved.length + 1,
+      slotNo: slotNumber,
       name,
       phone: cleanPhone,
       city,
@@ -254,9 +126,8 @@ document.addEventListener('DOMContentLoaded', () => {
       pincode,
       fullAddress: address,
       utr,
-      amount: 219,
-      score: quizScore,
-      timeTaken: quizTotalTimeSeconds,
+      amount: 499,
+      drawDate: "1 December 2026",
       paymentStatus: "VERIFIED",
       receipt: window.receiptThumbnailBase64 || null,
       timestamp: new Date().toISOString()
@@ -276,15 +147,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const noEl = document.getElementById('ticketPassNo');
     const nameEl = document.getElementById('ticketPassName');
     const cityEl = document.getElementById('ticketPassCity');
-    const scoreEl = document.getElementById('ticketPassScore');
+    const slotEl = document.getElementById('ticketPassSlot');
 
     if (refEl) refEl.textContent = entry.id;
-    if (noEl) noEl.textContent = `#VIP-${String(entry.ticketNo).padStart(4, '0')}`;
+    if (noEl) noEl.textContent = `#SLOT-${String(entry.slotNo).padStart(4, '0')} OF 250`;
     if (nameEl) nameEl.textContent = entry.name;
     if (cityEl) cityEl.textContent = `${entry.city}, ${entry.state || ''}`;
-    if (scoreEl) scoreEl.textContent = `${entry.score}/5 (${entry.timeTaken}s)`;
+    if (slotEl) slotEl.textContent = `Ticket #${entry.slotNo} of 250`;
 
-    window.goToStep(4);
+    currentStep = 3;
+
+    stepIndicators.forEach((ind, i) => {
+      if (!ind) return;
+      ind.classList.remove('active', 'done');
+      if (i + 1 < 3) ind.classList.add('done');
+      if (i + 1 === 3) ind.classList.add('active');
+    });
+
+    stepSections.forEach((sec, i) => {
+      if (!sec) return;
+      if (i + 1 === 3) {
+        sec.classList.add('active');
+      } else {
+        sec.classList.remove('active');
+      }
+    });
+
+    window.scrollTo({ top: 180, behavior: 'smooth' });
   }
 
   // Copy Reference Code
@@ -294,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const code = document.getElementById('ticketPassRef').textContent;
       navigator.clipboard.writeText(code).then(() => {
         copyBtn.textContent = '✓ COPIED TO CLIPBOARD!';
-        setTimeout(() => { copyBtn.textContent = '📋 COPY REFERENCE CODE'; }, 2000);
+        setTimeout(() => { copyBtn.textContent = '📋 COPY DRAW CODE'; }, 2000);
       });
     });
   }
@@ -307,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Input Sanitization
+  // Input sanitizers
   const phoneInp = document.getElementById('inputPhone');
   if (phoneInp) {
     phoneInp.addEventListener('input', () => {
@@ -329,9 +218,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-
   // ============================================================
-  // AI PAYMENT SCREENSHOT OCR & OPTICAL SCANNER ENGINE
+  // AI PAYMENT SCREENSHOT OCR & OPTICAL SCANNER ENGINE (₹499)
   // ============================================================
   window.aiVerifiedReceipt = false;
   window.receiptThumbnailBase64 = null;
@@ -390,7 +278,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Reset states
     window.aiVerifiedReceipt = false;
     if (resultBox) { resultBox.style.display = 'none'; resultBox.innerHTML = ''; }
     if (promptWrap) promptWrap.style.display = 'none';
@@ -401,12 +288,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const imgDataUrl = evt.target.result;
       if (previewImg) previewImg.src = imgDataUrl;
 
-      // Start AI Optical Scanning
       updateAIProgress(15, "⚡ Initializing Neural Vision Engine...", "Loading OCR matrix & canvas renderer...");
 
       const img = new Image();
       img.onload = function() {
-        // Downscale on offscreen canvas for super fast OCR & analysis
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
         const maxDim = 1200;
@@ -421,7 +306,6 @@ document.addEventListener('DOMContentLoaded', () => {
         canvas.height = h;
         ctx.drawImage(img, 0, 0, w, h);
 
-        // Store compact thumbnail for Admin Verification
         try {
           window.receiptThumbnailBase64 = canvas.toDataURL('image/jpeg', 0.65);
         } catch (e) {
@@ -440,17 +324,15 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function runDeepReceiptAnalysis(canvas, originalDataUrl) {
-    updateAIProgress(55, "💳 Scanning Transaction Data...", "Searching for ₹219, UTR number & payee signature...");
+    updateAIProgress(55, "💳 Scanning Transaction Data...", "Searching for ₹499, UTR number & payee signature...");
 
     let recognizedText = "";
     let extractedUTR = null;
 
-    // Check if Tesseract is available and execute OCR
     if (window.Tesseract && window.Tesseract.recognize) {
       try {
         updateAIProgress(70, "🤖 Running AI Neural OCR...", "Scanning receipt characters & text tokens...");
         
-        // Timeout promise after 8 seconds
         const ocrPromise = Tesseract.recognize(canvas, 'eng', {
           logger: m => {
             if (m.status === 'recognizing text' && m.progress) {
@@ -477,7 +359,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const appKeywords = ['PHONEPE', 'PHONPE', 'GPAY', 'GOOGLE PAY', 'PAYTM', 'FAMPAY', 'FAM', 'BHIM', 'CRED'];
     const txnKeywords = ['UTR', 'UPI REF', 'REF NO', 'TRANSACTION ID', 'TXN ID', 'BANK REF'];
     const payeeKeywords = ['DAPINDER', 'KAUR', 'FAM', 'PSWIN', 'ARENA'];
-    const amountKeywords = ['219', '₹219', '219.00', 'RS. 219', 'INR 219'];
+    const amountKeywords = ['499', '₹499', '499.00', 'RS. 499', 'INR 499', '219'];
 
     let statusHits = 0;
     let appHits = 0;
@@ -504,16 +386,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // 3. STRICT AI VALIDATION CRITERIA:
-    // A photo of clothes, face, or scenery will have 0 payment category hits and 0 UTR.
-    // A real UPI screenshot MUST have:
-    // - At least 2 different payment categories matched (e.g. Success + PhonePe, or Paid + 219, etc.)
-    // - AND either a valid extracted 12-digit UTR OR verified amount 219.
     const isValidPaymentReceipt = (totalCategoryHits >= 2) && (Boolean(extractedUTR) || amountHits > 0 || statusHits > 0);
 
     setTimeout(() => {
       if (isValidPaymentReceipt) {
-        // Genuine UPI payment receipt detected!
         window.aiVerifiedReceipt = true;
 
         if (extractedUTR && utrInput) {
@@ -522,18 +398,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const displayUTR = extractedUTR || (utrInput && utrInput.value.trim().length >= 8 ? utrInput.value.trim() : "Verified via Receipt");
 
-        updateAIProgress(100, "✅ AI Verification Passed!", "₹219 Payment Authenticated & Verified");
+        updateAIProgress(100, "✅ AI Verification Passed!", "₹499 Payment Authenticated & Slot Claimed");
 
         if (resultBox) {
           resultBox.style.display = 'block';
           resultBox.innerHTML = `
             <div class="ai-scan-success">
               <div style="font-weight: 800; font-size: 0.95rem; margin-bottom: 4px;">✅ AI PAYMENT VERIFIED!</div>
-              <div>• Payment Amount: <strong>₹219 Confirmed</strong></div>
+              <div>• Payment Amount: <strong>₹499 Confirmed</strong></div>
               <div>• UTR / Reference: <strong>${displayUTR}</strong></div>
-              <div>• Status: <strong style="color: #059669;">Genuine Bank Receipt Detected</strong></div>
+              <div>• Status: <strong style="color: #059669;">Lucky Draw Slot Locked</strong></div>
               <div style="margin-top: 8px; font-weight: 800; color: #047857; font-size: 0.88rem;">
-                ⚡ Starting Speed Quiz in 1 second...
+                🎉 Generating Your 1 Dec Lucky Draw Pass...
               </div>
             </div>
           `;
@@ -541,13 +417,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (window.synthAudio) window.synthAudio.playSuccess();
 
-        // Auto transition to quiz
         setTimeout(() => {
-          window.goToStep(3);
-        }, 1400);
+          finishRegistrationAndIssuePass();
+        }, 1300);
 
       } else {
-        // STRICT REJECTION: Invalid or non-payment image!
         window.aiVerifiedReceipt = false;
         updateAIProgress(100, "❌ Verification Rejected", "No valid UPI payment detected");
 
@@ -556,9 +430,9 @@ document.addEventListener('DOMContentLoaded', () => {
           resultBox.innerHTML = `
             <div class="ai-scan-error">
               <div style="font-weight: 800; font-size: 0.94rem; margin-bottom: 4px;">❌ Invalid Payment Receipt!</div>
-              <div>Image me koi bhi valid UPI payment details (PhonePe, GPay, Paytm, FamPay) ya ₹219 transaction detect nahi hua.</div>
+              <div>Image me koi bhi valid UPI payment details (PhonePe, GPay, Paytm, FamPay) ya ₹499 transaction detect nahi hua.</div>
               <div style="font-size: 0.76rem; margin-top: 6px; color: #7f1d1d; line-height: 1.4;">
-                ⚠️ <strong>Note:</strong> Kapde, photo ya random screenshots reject kar diye jayenge. Kripya apna real ₹219 payment screenshot upload karein jisme UTR number saaf dikh raha ho.
+                ⚠️ <strong>Note:</strong> Kapde, photo ya random screenshots reject kar diye jayenge. Kripya apna real ₹499 payment screenshot upload karein jisme UTR number saaf dikh raha ho.
               </div>
               <button type="button" class="btn-reupload" onclick="document.getElementById('ssFileInput').click()">
                 🔄 Re-upload Real Payment Screenshot
@@ -572,7 +446,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 400);
   }
 
-    // Track Function
+  // Track Function
   const trackBtn = document.getElementById('btnTrackSearch');
   const trackInp = document.getElementById('trackInput');
   const trackRes = document.getElementById('trackResultCard');
@@ -587,7 +461,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function performTrackSearch() {
     const q = (trackInp.value || '').trim();
     if (!q) {
-      alert("Kripya apna Reference Code (e.g. GTA6-PS5-XXXXXX) ya 10-digit Mobile number dalein!");
+      alert("Kripya apna Reference Code (e.g. LUCKY-PS5-XXXXXX) ya 10-digit Mobile number dalein!");
       return;
     }
 
@@ -606,22 +480,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (found) {
         document.getElementById('trackResId').textContent = found.id;
-        document.getElementById('trackResTicket').textContent = '⏳ PENDING / WAITING';
+        document.getElementById('trackResTicket').textContent = '🎉 1 DEC DRAW CONFIRMED';
         document.getElementById('trackResName').textContent = found.name;
         document.getElementById('trackResPhone').textContent = found.phone.slice(0,2) + '******' + found.phone.slice(-2);
         document.getElementById('trackResCity').textContent = found.city + (found.state ? ', ' + found.state : '');
-        document.getElementById('trackResScore').textContent = found.score + '/5 (' + found.timeTaken + 's)';
-      } else if (cleanQ.includes('GTA') || cleanQ.includes('PS5') || cleanDigits.length === 10) {
-        // Fallback for valid Reference code or 10-digit phone queried from another browser/tab
-        const displayRef = cleanQ.includes('GTA') ? cleanQ : ('GTA6-PS5-' + (cleanQ.slice(-6) || 'ACTIVE'));
+        document.getElementById('trackResScore').textContent = `Ticket #${found.slotNo || 185} of 250`;
+      } else if (cleanQ.includes('LUCKY') || cleanQ.includes('GTA') || cleanQ.includes('PS5') || cleanDigits.length === 10) {
+        const displayRef = cleanQ.includes('LUCKY') ? cleanQ : ('LUCKY-PS5-' + (cleanQ.slice(-6) || 'ACTIVE'));
         document.getElementById('trackResId').textContent = displayRef;
-        document.getElementById('trackResTicket').textContent = '⏳ PENDING / WAITING';
+        document.getElementById('trackResTicket').textContent = '🎉 1 DEC DRAW CONFIRMED';
         document.getElementById('trackResName').textContent = 'Verified Participant';
         document.getElementById('trackResPhone').textContent = cleanDigits.length >= 4 ? (cleanDigits.slice(0,2) + '******' + cleanDigits.slice(-2)) : 'Verified';
         document.getElementById('trackResCity').textContent = 'India';
-        document.getElementById('trackResScore').textContent = '5/5 (Speed Locked)';
+        document.getElementById('trackResScore').textContent = 'Ticket #185 of 250';
       } else {
-        alert("❌ Kripya apna valid Reference Code (e.g. GTA6-PS5-XXXXXX) ya Mobile number check karein!");
+        alert("❌ Kripya apna valid Reference Code ya Mobile number check karein!");
         trackRes.style.display = 'none';
         return;
       }
@@ -629,14 +502,10 @@ document.addEventListener('DOMContentLoaded', () => {
       trackRes.scrollIntoView({ behavior: 'smooth' });
     }
   }
-});
-
 
   // ============================================================
   // SOCIAL PROOF TOAST ENGINE & FAQ ACCORDION
   // ============================================================
-  
-  // FAQ Accordion Handler
   const faqQuestions = document.querySelectorAll('.faq-question');
   faqQuestions.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -649,27 +518,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Social Proof Toast Cycle
   const toastEl = document.getElementById('liveToast');
   const toastAvatar = document.getElementById('toastAvatar');
   const toastTitle = document.getElementById('toastTitle');
   const toastTime = document.getElementById('toastTime');
 
   const toastNotifications = [
-    { avatar: "⚡", title: "Rohit Sharma (Mumbai) registered", time: "Paid ₹219 • Pass #VIP-0789 (42s ago)" },
+    { avatar: "⚡", title: "Rohit Sharma (Mumbai) booked Slot #182", time: "Paid ₹499 • 1 Dec Mega Draw (42s ago)" },
     { avatar: "📦", title: "BlueDart AWB #849201441 Delivered", time: "PS5 Sealed Unit • Deepak K., Bengaluru" },
-    { avatar: "🎮", title: "Arjun Verma (Delhi) completed Quiz", time: "Score: 5/5 in 11.8s • (1m ago)" },
-    { avatar: "⚡", title: "Simran Kaur (Chandigarh) registered", time: "Verified via FamPay UPI • (2m ago)" },
+    { avatar: "🎉", title: "Arjun Verma (Delhi) booked Slot #183", time: "Paid ₹499 • (1m ago)" },
+    { avatar: "⚡", title: "Simran Kaur (Chandigarh) booked Slot #184", time: "Verified via FamPay UPI • (2m ago)" },
     { avatar: "🏆", title: "Season 2 Winner AWB #910284723", time: "Delivered to Harshil P., Ahmedabad" },
-    { avatar: "⚡", title: "Karthik R. (Hyderabad) registered", time: "Paid ₹219 • Pass #VIP-0794 (3m ago)" },
-    { avatar: "🎮", title: "Vikas Patel (Surat) completed Quiz", time: "Score: 5/5 in 12.4s • (4m ago)" }
+    { avatar: "🔥", title: "216 of 250 Slots Booked!", time: "Only 34 Slots Remaining for 1 Dec Draw" },
+    { avatar: "⚡", title: "Karthik R. (Hyderabad) booked Slot #185", time: "Paid ₹499 • (3m ago)" }
   ];
 
   let toastIdx = 0;
 
   function showNextToast() {
     if (!toastEl || !toastTitle || !toastTime) return;
-    
     const notif = toastNotifications[toastIdx % toastNotifications.length];
     toastIdx++;
 
@@ -678,21 +545,19 @@ document.addEventListener('DOMContentLoaded', () => {
     toastTime.textContent = notif.time;
 
     toastEl.classList.add('show');
-
-    // Hide after 4 seconds
     setTimeout(() => {
       toastEl.classList.remove('show');
     }, 4000);
   }
 
-  // Initial toast after 3 seconds, then every 9 seconds
   setTimeout(() => {
     showNextToast();
     setInterval(showNextToast, 9000);
   }, 3000);
 
+});
 
-  // 1-Click Copy for UPI ID
+// 1-Click Copy for UPI ID
 window.copyUPIId = function() {
   const upi = 'dapinderkaur@fam';
   const btn = document.getElementById('btnCopyUPI');
@@ -702,26 +567,8 @@ window.copyUPIId = function() {
         btn.textContent = '✓ Copied!';
         setTimeout(() => { btn.textContent = '📋 Copy'; }, 2000);
       }
-    }).catch(() => fallbackCopy(upi, btn));
+    });
   } else {
-    fallbackCopy(upi, btn);
+    alert("UPI ID: " + upi);
   }
 };
-
-function fallbackCopy(text, btn) {
-  const ta = document.createElement('textarea');
-  ta.value = text;
-  ta.style.position = 'fixed';
-  ta.style.opacity = '0';
-  document.body.appendChild(ta);
-  ta.focus();
-  ta.select();
-  try {
-    document.execCommand('copy');
-    if (btn) {
-      btn.textContent = '✓ Copied!';
-      setTimeout(() => { btn.textContent = '📋 Copy'; }, 2000);
-    }
-  } catch (err) {}
-  document.body.removeChild(ta);
-}

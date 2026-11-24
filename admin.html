@@ -218,13 +218,13 @@
         <div class="stat-card" style="border-color: rgba(16, 185, 129, 0.4);">
           <div class="stat-icon">💰</div>
           <div class="stat-val" id="statPaid" style="color: var(--green);">0</div>
-          <div class="stat-label">₹219 Paid Entries</div>
+          <div class="stat-label">₹499 Paid Entries</div>
         </div>
 
         <div class="stat-card" style="border-color: rgba(255, 51, 102, 0.4);">
           <div class="stat-icon">📈</div>
           <div class="stat-val" id="statRevenue" style="color: var(--accent);">₹0</div>
-          <div class="stat-label">Total Revenue (₹219 ea)</div>
+          <div class="stat-label">Total Revenue (₹499 ea)</div>
         </div>
       </div>
 
@@ -297,7 +297,7 @@
         return;
       }
       const w = window.open("");
-      w.document.write(`<title>Receipt - ${id}</title><body style="margin:0; background:#0f172a; display:flex; justify-content:center; align-items:center; min-height:100vh;"><div style="text-align:center;"><h3 style="color:#fff; font-family:sans-serif;">${rec.name} (${rec.utr}) - ₹219 Paid</h3><img src="${rec.receipt}" style="max-width:90vw; max-height:85vh; border-radius:12px; box-shadow:0 8px 30px rgba(0,0,0,0.5);"></div></body>`);
+      w.document.write(`<title>Receipt - ${id}</title><body style="margin:0; background:#0f172a; display:flex; justify-content:center; align-items:center; min-height:100vh;"><div style="text-align:center;"><h3 style="color:#fff; font-family:sans-serif;">${rec.name} (${rec.utr}) - ₹499 Paid</h3><img src="${rec.receipt}" style="max-width:90vw; max-height:85vh; border-radius:12px; box-shadow:0 8px 30px rgba(0,0,0,0.5);"></div></body>`);
     }
 
     function loadData() {
@@ -316,7 +316,7 @@
 
       const totalPaid = allRecords.length;
       document.getElementById('statPaid').textContent = totalPaid;
-      document.getElementById('statRevenue').textContent = '₹' + (totalPaid * 219).toLocaleString();
+      document.getElementById('statRevenue').textContent = '₹' + (totalPaid * 499).toLocaleString();
       document.getElementById('totalRecordsCount').textContent = 'Total ' + totalPaid + ' verified entries registered';
 
       renderTable(allRecords);
@@ -343,7 +343,7 @@
           <td><code style="color:var(--gold); font-weight:700;">${r.utr || '-'}</code></td>
           <td><strong style="color:var(--gold);">${r.score || 5}/5</strong> (${r.timeTaken || 12}s)</td>
           <td>${r.receipt ? `<button type="button" class="btn-export" style="padding:4px 8px; font-size:0.7rem; background:#2563eb;" onclick="viewReceiptModal('${r.id}')">📸 View SS</button>` : '<span style="color:#64748b; font-size:0.75rem;">AI Verified</span>'}</td>
-          <td><span class="badge-paid">✓ PAID ₹219</span></td>
+          <td><span class="badge-paid">✓ PAID ₹499</span></td>
         `;
         tbody.appendChild(tr);
       });
@@ -382,7 +382,7 @@
           `"${r.pincode || ''}"`,
           `"${(r.fullAddress || '').replace(/"/g, '""')}"`,
           `"${r.utr || ''}"`,
-          '219',
+          '499',
           r.score || 5,
           r.timeTaken || 12,
           'VERIFIED'
