@@ -631,4 +631,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     animate();
   }
+
+  // Smooth Scroll Reveal via IntersectionObserver
+  if ('IntersectionObserver' in window) {
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-revealed');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: '0px 0px -40px 0px'
+    });
+
+    document.querySelectorAll('.reveal-on-scroll').forEach(el => {
+      revealObserver.observe(el);
+    });
+  } else {
+    // Fallback for browsers without IntersectionObserver
+    document.querySelectorAll('.reveal-on-scroll').forEach(el => {
+      el.classList.add('is-revealed');
+    });
+  }
 });

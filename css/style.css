@@ -1289,3 +1289,372 @@ img {
   color: #ef4444;
   text-decoration: none;
 }
+
+/* ============================================================
+   SMOOTH PRODUCTION ANIMATIONS & CARD MICRO-INTERACTIONS
+   ============================================================ */
+
+/* 1. Keyframe Definitions */
+@keyframes heroCardFloat {
+  0%, 100% {
+    transform: translateY(0);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.55), 0 0 30px rgba(255, 51, 102, 0.15);
+  }
+  50% {
+    transform: translateY(-8px);
+    box-shadow: 0 35px 65px rgba(0, 0, 0, 0.65), 0 0 45px rgba(255, 51, 102, 0.25);
+  }
+}
+
+@keyframes pulsePillGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 16px 2px rgba(255, 51, 102, 0.65);
+  }
+}
+
+@keyframes beaconPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+@keyframes stepFadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cardPopIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(14px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes subtleGoldShimmer {
+  0% {
+    border-color: rgba(245, 158, 11, 0.4);
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.55), 0 0 25px rgba(245, 158, 11, 0.15);
+  }
+  50% {
+    border-color: rgba(245, 158, 11, 0.8);
+    box-shadow: 0 24px 55px rgba(0, 0, 0, 0.65), 0 0 35px rgba(245, 158, 11, 0.35);
+  }
+  100% {
+    border-color: rgba(245, 158, 11, 0.4);
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.55), 0 0 25px rgba(245, 158, 11, 0.15);
+  }
+}
+
+/* 2. Scroll Reveal Utility Classes */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-on-scroll.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Staggered reveals for grid items */
+.reveal-stagger > *:nth-child(1) { transition-delay: 0.05s; }
+.reveal-stagger > *:nth-child(2) { transition-delay: 0.12s; }
+.reveal-stagger > *:nth-child(3) { transition-delay: 0.20s; }
+.reveal-stagger > *:nth-child(4) { transition-delay: 0.28s; }
+.reveal-stagger > *:nth-child(5) { transition-delay: 0.36s; }
+.reveal-stagger > *:nth-child(6) { transition-delay: 0.44s; }
+
+/* 3. Hero Element Enhancements */
+.hero-product-card {
+  animation: heroCardFloat 5s ease-in-out infinite;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+}
+
+.hero-product-card:hover {
+  animation-play-state: paused;
+  transform: translateY(-12px) scale(1.015);
+  box-shadow: 0 35px 70px rgba(0, 0, 0, 0.7), 0 0 45px rgba(255, 51, 102, 0.3);
+}
+
+.hero-pill {
+  animation: pulsePillGlow 3s ease-in-out infinite;
+  transition: transform 0.3s ease;
+}
+
+.hero-pill:hover {
+  transform: translateY(-2px);
+}
+
+.pill-dot {
+  animation: beaconPulse 2s infinite;
+}
+
+.metric-badge {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.metric-badge:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4), 0 0 15px rgba(255, 51, 102, 0.12);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.hero-slots-box {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.hero-slots-box:hover {
+  transform: translateY(-3px);
+  border-color: rgba(245, 158, 11, 0.4);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.45), 0 0 20px rgba(245, 158, 11, 0.15);
+}
+
+.hsb-fill {
+  transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 4. Step Cards (How It Works) */
+.step-box {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, border-color 0.4s ease, background 0.4s ease;
+}
+
+.step-box:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.55), 0 0 25px rgba(255, 51, 102, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.step-num-pill {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+}
+
+.step-box:hover .step-num-pill {
+  transform: scale(1.15);
+  box-shadow: 0 0 16px currentColor;
+}
+
+/* 5. Prize Cards */
+.clean-prize-card {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, border-color 0.4s ease;
+}
+
+.clean-prize-card:hover {
+  transform: translateY(-10px) scale(1.01);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(255, 51, 102, 0.2);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.clean-prize-card.card-rank1 {
+  animation: subtleGoldShimmer 4s ease-in-out infinite;
+}
+
+.clean-prize-card.card-rank1:hover {
+  animation-play-state: paused;
+  transform: translateY(-12px) scale(1.018);
+  border-color: var(--accent-gold);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7), 0 0 45px rgba(245, 158, 11, 0.4);
+}
+
+.cpc-img-wrap img {
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.clean-prize-card:hover .cpc-img-wrap img {
+  transform: scale(1.06);
+}
+
+/* 6. Form Card & Stepper */
+.form-card {
+  transition: box-shadow 0.4s ease, border-color 0.4s ease;
+  box-shadow: 0 25px 65px rgba(0, 0, 0, 0.6), 0 0 35px rgba(255, 51, 102, 0.1);
+}
+
+.form-step {
+  animation: stepFadeUp 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.step-indicator {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.step-circle {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.step-indicator.active .step-circle {
+  transform: scale(1.2);
+  box-shadow: 0 0 16px var(--accent-primary);
+}
+
+.step-indicator.completed .step-circle {
+  box-shadow: 0 0 12px var(--accent-green);
+}
+
+/* 7. Leaderboard Card & Row Hover */
+.leaderboard-table-wrap {
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.leaderboard-table-wrap:hover {
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5), 0 0 25px rgba(16, 185, 129, 0.1);
+}
+
+.leaderboard-table tbody tr {
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+
+.leaderboard-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* 8. Tracking Box */
+.track-box {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.track-box:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.55), 0 0 25px rgba(6, 182, 212, 0.12);
+}
+
+#trackResultCard {
+  animation: cardPopIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* 9. Stock Gallery Cards */
+.gallery-card {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, border-color 0.4s ease;
+}
+
+.gallery-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.6), 0 0 25px rgba(6, 182, 212, 0.18);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.gallery-card img {
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gallery-card:hover img {
+  transform: scale(1.07);
+}
+
+/* 10. FAQ Cards with Smooth Accordion Animation */
+.faq-card {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease, background 0.35s ease;
+  overflow: hidden;
+}
+
+.faq-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+}
+
+.faq-card.open {
+  border-color: var(--accent-primary);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5), 0 0 25px rgba(255, 51, 102, 0.2);
+}
+
+.faq-q {
+  transition: color 0.25s ease, background 0.25s ease;
+  user-select: none;
+}
+
+.faq-q:hover {
+  color: var(--accent-primary);
+}
+
+.faq-card.open .faq-q {
+  color: var(--accent-primary);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.faq-icon {
+  display: inline-block;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), color 0.25s ease;
+  font-weight: 800;
+  font-size: 1.25rem;
+}
+
+.faq-card.open .faq-icon {
+  transform: rotate(45deg);
+  color: var(--accent-primary);
+}
+
+.faq-a {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  padding: 0 20px;
+  transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, padding 0.35s ease;
+}
+
+.faq-card.open .faq-a {
+  max-height: 280px;
+  opacity: 1;
+  padding: 18px 20px;
+}
+
+/* 11. Buttons Micro-Interactions */
+.btn-primary-action, .btn-secondary-action, .btn-header-cta, .btn-form-next, .btn-track-action {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+}
+
+.btn-primary-action:hover, .btn-header-cta:hover, .btn-form-next:hover, .btn-track-action:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(255, 51, 102, 0.45);
+}
+
+.btn-secondary-action:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.btn-primary-action:active, .btn-secondary-action:active, .btn-header-cta:active, .btn-form-next:active {
+  transform: scale(0.96);
+}
+
+/* 12. Ticket Card Entrance */
+.ticket-card {
+  animation: cardPopIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* 13. Accessibility Preference */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal-on-scroll {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
