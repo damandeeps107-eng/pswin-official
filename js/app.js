@@ -368,3 +368,37 @@ document.addEventListener('DOMContentLoaded', () => {
     alert("❌ Koi entry nahi mili. Kripya apna valid Reference Code ya Mobile number check karein!");
   }
 });
+
+// 1-Click Copy for UPI ID
+window.copyUPIId = function() {
+  const upi = 'dapinderkaur@fam';
+  const btn = document.getElementById('btnCopyUPI');
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(upi).then(() => {
+      if (btn) {
+        btn.textContent = '✓ Copied!';
+        setTimeout(() => { btn.textContent = '📋 Copy'; }, 2000);
+      }
+    }).catch(() => fallbackCopy(upi, btn));
+  } else {
+    fallbackCopy(upi, btn);
+  }
+};
+
+function fallbackCopy(text, btn) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try {
+    document.execCommand('copy');
+    if (btn) {
+      btn.textContent = '✓ Copied!';
+      setTimeout(() => { btn.textContent = '📋 Copy'; }, 2000);
+    }
+  } catch (err) {}
+  document.body.removeChild(ta);
+}
