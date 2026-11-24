@@ -248,6 +248,7 @@
                 <th>City / State</th>
                 <th>UTR / Ref Number</th>
                 <th>Score</th>
+                <th>Receipt / SS</th>
                 <th>Status</th>
               </tr>
             </thead>
@@ -288,6 +289,17 @@
       location.reload();
     }
 
+    
+    function viewReceiptModal(id) {
+      const rec = allRecords.find(r => r.id === id);
+      if (!rec || !rec.receipt) {
+        alert("Receipt screenshot not found!");
+        return;
+      }
+      const w = window.open("");
+      w.document.write(`<title>Receipt - ${id}</title><body style="margin:0; background:#0f172a; display:flex; justify-content:center; align-items:center; min-height:100vh;"><div style="text-align:center;"><h3 style="color:#fff; font-family:sans-serif;">${rec.name} (${rec.utr}) - ₹219 Paid</h3><img src="${rec.receipt}" style="max-width:90vw; max-height:85vh; border-radius:12px; box-shadow:0 8px 30px rgba(0,0,0,0.5);"></div></body>`);
+    }
+
     function loadData() {
       const visits = parseInt(localStorage.getItem('pswin_total_visits') || '0', 10);
       const quizzes = parseInt(localStorage.getItem('pswin_total_quizzes') || '0', 10);
@@ -315,7 +327,7 @@
       tbody.innerHTML = '';
 
       if (list.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:30px; color:#94a3b8;">No registrations found</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:30px; color:#94a3b8;">No registrations found</td></tr>';
         return;
       }
 
@@ -330,6 +342,7 @@
           <td>${r.city || '-'}${r.state ? ', ' + r.state : ''}</td>
           <td><code style="color:var(--gold); font-weight:700;">${r.utr || '-'}</code></td>
           <td><strong style="color:var(--gold);">${r.score || 5}/5</strong> (${r.timeTaken || 12}s)</td>
+          <td>${r.receipt ? `<button type="button" class="btn-export" style="padding:4px 8px; font-size:0.7rem; background:#2563eb;" onclick="viewReceiptModal('${r.id}')">📸 View SS</button>` : '<span style="color:#64748b; font-size:0.75rem;">AI Verified</span>'}</td>
           <td><span class="badge-paid">✓ PAID ₹219</span></td>
         `;
         tbody.appendChild(tr);

@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 </head>
 <body>
 
@@ -176,10 +177,53 @@
           </div>
         </div>
 
-        <div class="form-group">
+                <!-- AI Payment Receipt Optical Scanner -->
+        <div class="ai-scanner-box" id="aiScannerBox">
+          <div class="ai-scanner-header">
+            <div class="ai-badge">🤖 AI PAYMENT VERIFIER 3.0</div>
+            <span class="ai-live-tag"><span class="pulse-dot"></span> REAL-TIME SCANNER</span>
+          </div>
+          <p class="ai-scanner-desc">
+            Apne ₹219 payment ka screenshot upload karein (GPay, PhonePe, Paytm ya FamPay). Hamara AI system turant receipt analyze karke UTR aur payment status verify karega!
+          </p>
+
+          <div class="upload-dropzone" id="uploadDropzone">
+            <input type="file" id="ssFileInput" accept="image/*" style="display: none;">
+            
+            <div id="dropzonePrompt">
+              <div class="upload-icon">📸</div>
+              <div class="upload-title">Tap to Upload Payment Screenshot</div>
+              <div class="upload-subtitle">JPG, PNG, WebP screenshot from any UPI app</div>
+            </div>
+
+            <div id="dropzonePreviewWrap" style="display: none;">
+              <div class="ss-preview-container">
+                <img id="ssPreviewImg" src="" alt="Payment Receipt Preview" class="ss-preview-img">
+                <div class="scanner-laser" id="scannerLaser"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Scanning Progress Bar -->
+          <div id="aiScanProgress" style="display: none; margin-top: 14px;">
+            <div class="ai-status-row">
+              <span id="aiStatusText" class="ai-status-text">⚡ Initializing Neural Vision Engine...</span>
+              <span id="aiPercentText" class="ai-percent-text">0%</span>
+            </div>
+            <div class="ai-progress-track">
+              <div id="aiProgressBar" class="ai-progress-fill" style="width: 0%;"></div>
+            </div>
+            <div id="aiStepLog" class="ai-step-log">🔍 Ready for optical transaction verification...</div>
+          </div>
+
+          <!-- AI Result Output -->
+          <div id="aiScanResult" style="display: none; margin-top: 14px;"></div>
+        </div>
+
+        <div class="form-group" style="margin-top: 16px;">
           <label class="form-label">12-Digit UPI Reference / UTR Number *</label>
-          <input type="text" id="inputUTR" class="form-input" placeholder="Enter 12-digit UTR (e.g. 432190123890)" maxlength="16" required>
-          <small style="color: #64748b; font-size: 0.78rem; display: block; margin-top: 4px;">You will find this in your payment receipt after paying ₹219.</small>
+          <input type="text" id="inputUTR" class="form-input" placeholder="Auto-filled by AI or enter 12-digit UTR" maxlength="16" required>
+          <small style="color: #64748b; font-size: 0.78rem; display: block; margin-top: 4px;">AI scanner will automatically extract this from your payment screenshot.</small>
         </div>
 
         <div style="display: flex; gap: 12px; margin-top: 18px;">
