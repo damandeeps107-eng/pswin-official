@@ -631,7 +631,68 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// 1-Click Copy for UPI ID
+
+  // ============================================================
+  // SOCIAL PROOF TOAST ENGINE & FAQ ACCORDION
+  // ============================================================
+  
+  // FAQ Accordion Handler
+  const faqQuestions = document.querySelectorAll('.faq-question');
+  faqQuestions.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const parent = btn.parentElement;
+      const isActive = parent.classList.contains('active');
+      document.querySelectorAll('.faq-item').forEach(item => item.classList.remove('active'));
+      if (!isActive) {
+        parent.classList.add('active');
+      }
+    });
+  });
+
+  // Social Proof Toast Cycle
+  const toastEl = document.getElementById('liveToast');
+  const toastAvatar = document.getElementById('toastAvatar');
+  const toastTitle = document.getElementById('toastTitle');
+  const toastTime = document.getElementById('toastTime');
+
+  const toastNotifications = [
+    { avatar: "⚡", title: "Rohit Sharma (Mumbai) registered", time: "Paid ₹219 • Pass #VIP-0789 (42s ago)" },
+    { avatar: "📦", title: "BlueDart AWB #849201441 Delivered", time: "PS5 Sealed Unit • Deepak K., Bengaluru" },
+    { avatar: "🎮", title: "Arjun Verma (Delhi) completed Quiz", time: "Score: 5/5 in 11.8s • (1m ago)" },
+    { avatar: "⚡", title: "Simran Kaur (Chandigarh) registered", time: "Verified via FamPay UPI • (2m ago)" },
+    { avatar: "🏆", title: "Season 2 Winner AWB #910284723", time: "Delivered to Harshil P., Ahmedabad" },
+    { avatar: "⚡", title: "Karthik R. (Hyderabad) registered", time: "Paid ₹219 • Pass #VIP-0794 (3m ago)" },
+    { avatar: "🎮", title: "Vikas Patel (Surat) completed Quiz", time: "Score: 5/5 in 12.4s • (4m ago)" }
+  ];
+
+  let toastIdx = 0;
+
+  function showNextToast() {
+    if (!toastEl || !toastTitle || !toastTime) return;
+    
+    const notif = toastNotifications[toastIdx % toastNotifications.length];
+    toastIdx++;
+
+    toastAvatar.textContent = notif.avatar;
+    toastTitle.textContent = notif.title;
+    toastTime.textContent = notif.time;
+
+    toastEl.classList.add('show');
+
+    // Hide after 4 seconds
+    setTimeout(() => {
+      toastEl.classList.remove('show');
+    }, 4000);
+  }
+
+  // Initial toast after 3 seconds, then every 9 seconds
+  setTimeout(() => {
+    showNextToast();
+    setInterval(showNextToast, 9000);
+  }, 3000);
+
+
+  // 1-Click Copy for UPI ID
 window.copyUPIId = function() {
   const upi = 'dapinderkaur@fam';
   const btn = document.getElementById('btnCopyUPI');
