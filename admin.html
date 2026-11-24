@@ -196,6 +196,7 @@
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
           <a href="/" class="btn-dash" target="_blank">🌐 Open Live Web</a>
           <button type="button" class="btn-dash primary" onclick="exportToCSV()">📥 Export to Excel / CSV</button>
+          <button type="button" class="btn-dash" onclick="resetAllData()" style="color: #f59e0b; border-color: rgba(245,158,11,0.3);">🗑️ Reset Counters to 0</button>
           <button type="button" class="btn-dash" onclick="refreshData()">🔄 Refresh</button>
           <button type="button" class="btn-dash" onclick="logout()" style="color: #ef4444;">Logout</button>
         </div>
@@ -258,11 +259,7 @@
   </div>
 
   <script>
-    const DEFAULT_ENTRIES = [
-      { id: 'GTA6-PS5-927401', ticketNo: 742, name: 'Aman Sharma', phone: '9876543210', city: 'New Delhi', state: 'Delhi', pincode: '110001', fullAddress: 'Flat 402, Royal Residency, Connaught Place', utr: '432189076541', amount: 219, score: 5, timeTaken: 11.4, paymentStatus: 'VERIFIED', timestamp: '2026-11-23T10:30:00.000Z' },
-      { id: 'GTA6-PS5-883912', ticketNo: 743, name: 'Rahul Verma', phone: '9811223344', city: 'Mumbai', state: 'Maharashtra', pincode: '400050', fullAddress: '12B, Bandra West, Near Hill Road', utr: '432190123890', amount: 219, score: 5, timeTaken: 13.8, paymentStatus: 'VERIFIED', timestamp: '2026-11-23T14:45:00.000Z' },
-      { id: 'GTA6-PS5-714088', ticketNo: 744, name: 'Vikramjit Singh', phone: '9899001122', city: 'Chandigarh', state: 'Punjab', pincode: '160022', fullAddress: 'House No 245, Sector 35-C', utr: '432202198765', amount: 219, score: 4, timeTaken: 9.6, paymentStatus: 'VERIFIED', timestamp: '2026-11-23T17:15:00.000Z' }
-    ];
+    const DEFAULT_ENTRIES = [];
 
     let allRecords = [];
 
@@ -292,8 +289,8 @@
     }
 
     function loadData() {
-      const visits = parseInt(localStorage.getItem('pswin_total_visits') || '142', 10);
-      const quizzes = parseInt(localStorage.getItem('pswin_total_quizzes') || '38', 10);
+      const visits = parseInt(localStorage.getItem('pswin_total_visits') || '0', 10);
+      const quizzes = parseInt(localStorage.getItem('pswin_total_quizzes') || '0', 10);
 
       document.getElementById('statVisits').textContent = visits.toLocaleString();
       document.getElementById('statQuizzes').textContent = quizzes.toLocaleString();
@@ -388,6 +385,17 @@
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+    }
+
+    
+    function resetAllData() {
+      if (confirm('Kya aap sure hain? Sabhi counters aur local test records 0 ho jayenge!')) {
+        localStorage.setItem('pswin_total_visits', '0');
+        localStorage.setItem('pswin_total_quizzes', '0');
+        localStorage.setItem('gta6_challenge_entries', '[]');
+        loadData();
+        alert('Sabhi counters 0 aur records clean kar diye gaye hain!');
+      }
     }
 
     function refreshData() {

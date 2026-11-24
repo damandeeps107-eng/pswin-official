@@ -2,7 +2,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   // Real-Time Visitor Counter for Meta Ads Traffic
   try {
-    const curVisits = parseInt(localStorage.getItem('pswin_total_visits') || '142', 10) + 1;
+    const curVisits = parseInt(localStorage.getItem('pswin_total_visits') || '0', 10) + 1;
     localStorage.setItem('pswin_total_visits', curVisits);
   } catch(e){}
   // DOM Elements
@@ -413,15 +413,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Advance to Step 5
     window.goToStep(5);
 
-    // Dynamic WhatsApp proof button
-    const waBtn = document.getElementById('btnWhatsappProof');
-    if (waBtn) {
-      const msg = encodeURIComponent(
-        "Hello PSWIN Admin,\n\nI have completed the GTA VI Speed Quiz & Paid ₹219 for the PS5 Pro Tournament!\n\n👤 Name: " + entry.name + "\n📱 Phone: " + entry.phone + "\n📍 City: " + entry.city + ", " + (entry.state || '') + "\n🎟️ Ticket No: #VIP-" + entry.ticketNo + "\n🔑 Reference Code: " + entry.id + "\n💳 12-Digit UTR: " + entry.utr + "\n⚡ Score: " + entry.score + "/5 (" + entry.timeTaken + "s)\n\nPlease verify my payment and confirm my slot!"
-      );
-      waBtn.href = "https://wa.me/919592381735?text=" + msg;
-    }
-  }
+      }
 
   
   // Copy Reference Code
