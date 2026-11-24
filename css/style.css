@@ -1658,3 +1658,16 @@ img {
     transform: none !important;
   }
 }
+
+/* Ultra-fast mobile touch response for Meta in-app browser */
+button, a, input, select, .quiz-opt-btn, .step-box, .clean-prize-card, .faq-q {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+#btnWhatsappProof:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(37, 211, 102, 0.55);
+}
+#btnWhatsappProof:active {
+  transform: scale(0.97);
+}
