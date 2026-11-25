@@ -506,19 +506,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ============================================================
   // SOCIAL PROOF TOAST ENGINE & FAQ ACCORDION
   // ============================================================
-  const faqQuestions = document.querySelectorAll('.faq-question');
-  faqQuestions.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const parent = btn.parentElement;
-      const isActive = parent.classList.contains('active');
-      document.querySelectorAll('.faq-item').forEach(item => item.classList.remove('active'));
-      if (!isActive) {
-        parent.classList.add('active');
-      }
-    });
-  });
-
-  const toastEl = document.getElementById('liveToast');
+    const toastEl = document.getElementById('liveToast');
   const toastAvatar = document.getElementById('toastAvatar');
   const toastTitle = document.getElementById('toastTitle');
   const toastTime = document.getElementById('toastTime');
