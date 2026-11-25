@@ -1199,3 +1199,70 @@ body {
   border-radius: 50%;
   background: #10b981;
 }
+
+
+/* ============================================================
+   4-TIER PRIZE POOL GRID (1st PS5 Pro, 2nd PS5, 3rd PS4, 4th GTA Disc)
+   ============================================================ */
+.prize-pool-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  max-width: 620px;
+  margin: 14px auto 4px;
+}
+
+@media (max-width: 580px) {
+  .prize-pool-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+}
+
+.prize-mini-card {
+  background: #ffffff;
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  padding: 10px 8px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.prize-mini-card:hover {
+  transform: translateY(-2px);
+  border-color: #2563eb;
+}
+
+.prize-rank-badge {
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 12px;
+  display: inline-block;
+  margin-bottom: 4px;
+  letter-spacing: 0.02em;
+}
+
+.prize-1st .prize-rank-badge { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+.prize-2nd .prize-rank-badge { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+.prize-3rd .prize-rank-badge { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; }
+.prize-4th .prize-rank-badge { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+
+.prize-name {
+  font-family: var(--font-display);
+  font-size: 0.86rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.2;
+}
+
+.prize-sub {
+  font-size: 0.7rem;
+  color: #64748b;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

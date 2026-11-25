@@ -513,7 +513,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const toastNotifications = [
     { avatar: "⚡", title: "Rohit Sharma (Mumbai) booked Slot #182", time: "Paid ₹499 • 1 Dec Mega Draw (42s ago)" },
-    { avatar: "📦", title: "BlueDart AWB #849201441 Delivered", time: "PS5 Sealed Unit • Deepak K., Bengaluru" },
+    { avatar: "🎁", title: "4 Mega Prizes in 1 Dec Draw", time: "1st PS5 Pro • 2nd PS5 Slim • 3rd PS4 • 4th GTA Disc" },
     { avatar: "🎉", title: "Arjun Verma (Delhi) booked Slot #183", time: "Paid ₹499 • (1m ago)" },
     { avatar: "⚡", title: "Simran Kaur (Chandigarh) booked Slot #184", time: "Verified via FamPay UPI • (2m ago)" },
     { avatar: "🏆", title: "Season 2 Winner AWB #910284723", time: "Delivered to Harshil P., Ahmedabad" },
